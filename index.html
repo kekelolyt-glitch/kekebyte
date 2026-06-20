@@ -215,8 +215,8 @@ function login(){
 
     if(user === "admin" && pass === "admin"){
         document.body.style.background = "#05070d";
-        document.getElementById("loginBox").style.style.display = "none"; // Bazı tarayıcılar için garantiye alalım
-        document.getElementById("loginBox").remove(); // Login kutusunu tamamen uçurabiliriz
+        document.getElementById("loginBox").style.display = "none"; // Bazı tarayıcılar için garantiye alalım
+        document.getElementById("loginBox").remove();
         document.getElementById("dashboard").style.display = "flex";
     }else{
         document.getElementById("error").innerText = "Hatalı giriş!";
@@ -401,7 +401,7 @@ async function loadDiscordData(){
         const data = await response.json();
         result.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
     } catch(err) {
-        result.innerHTML = "❌ API'ye bağlanılamadı (Lokal /api/discordid yolu bulunamadı).";
+        result.innerHTML = "❌ API'ye bağlanılamadı (Lokal /api/discordid  Sonuç burada görünecek.).";
     }
 }
 </script>

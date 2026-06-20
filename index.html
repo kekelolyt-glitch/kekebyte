@@ -27,7 +27,7 @@ body {
 }
 
 input {
-    width: 100%;
+    width: calc(100% - 20px);
     padding: 10px;
     margin-top: 10px;
     border: none;
@@ -55,7 +55,6 @@ button:hover {
 #dashboard {
     display: none;
     height: 100vh;
-    display: flex;
 }
 
 .sidebar {
@@ -100,7 +99,6 @@ button:hover {
 
 <body>
 
-<!-- LOGIN -->
 <div id="loginBox">
     <h2>KekeIntel Login</h2>
     <input id="user" placeholder="Username">
@@ -109,7 +107,6 @@ button:hover {
     <p id="error" style="color:red;"></p>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dashboard">
     <div class="sidebar">
         <h2>KekeIntel</h2>
@@ -123,31 +120,22 @@ button:hover {
 
     <div class="main" id="content">
         <h2>Dashboard</h2>
-
-        <div class="card">
-            🟢 Sistem Durumu: Aktif
-        </div>
-
-        <div class="card">
-            🔵 API Status: Online
-        </div>
-
-        <div class="card">
-            👤 Kullanıcı: Admin Panel
-        </div>
+        <div class="card">🟢 Sistem Durumu: Aktif</div>
+        <div class="card">🔵 API Status: Online</div>
+        <div class="card">👤 Kullanıcı: Admin Panel</div>
     </div>
 </div>
 
 <script>
 function login() {
-    let u = document.getElementById("user").value;
-    let p = document.getElementById("pass").value;
+    const u = document.getElementById("user").value.trim();
+    const p = document.getElementById("pass").value.trim();
 
-    if(u === "admin" && p === "admin") {
+    if (u === "admin" && p === "admin") {
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("dashboard").style.display = "flex";
     } else {
-        document.getElementById("error").innerText = "Hatalı giriş!";
+        document.getElementById("error").textContent = "Hatalı giriş!";
     }
 }
 
@@ -156,28 +144,31 @@ function logout() {
 }
 
 function show(page) {
-    let content = document.getElementById("content");
+    const content = document.getElementById("content");
 
-    if(page === "home") {
+    if (page === "home") {
         content.innerHTML = `
-        <h2>Dashboard</h2>
-        <div class="card">🟢 Sistem Durumu: Aktif</div>
-        <div class="card">🔵 API Status: Online</div>
-        <div class="card">👤 Kullanıcı: Admin Panel</div>`;
+            <h2>Dashboard</h2>
+            <div class="card">🟢 Sistem Durumu: Aktif</div>
+            <div class="card">🔵 API Status: Online</div>
+            <div class="card">👤 Kullanıcı: Admin Panel</div>
+        `;
     }
 
-    if(page === "tools") {
+    if (page === "tools") {
         content.innerHTML = `
-        <h2>Tools</h2>
-        <div class="card">IP Checker (mock)</div>
-        <div class="card">Email Validator (mock)</div>`;
+            <h2>Tools</h2>
+            <div class="card">IP Checker (mock)</div>
+            <div class="card">Email Validator (mock)</div>
+        `;
     }
 
-    if(page === "api") {
+    if (page === "api") {
         content.innerHTML = `
-        <h2>API Status</h2>
-        <div class="card">🟢 Main API: Online</div>
-        <div class="card">🟢 Backup API: Online</div>`;
+            <h2>API Status</h2>
+            <div class="card">🟢 Main API: Online</div>
+            <div class="card">🟢 Backup API: Online</div>
+        `;
     }
 }
 </script>

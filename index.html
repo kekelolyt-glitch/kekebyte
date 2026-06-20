@@ -327,6 +327,24 @@ function validateEmail(){
         result.innerHTML="❌ Geçersiz email formatı";
     }
 }
+async function lookupDomain(){
+
+    const domain =
+        document.getElementById("domainInput").value.trim();
+
+    const result =
+        document.getElementById("domainResult");
+
+    if(!domain){
+        result.innerHTML="Domain gir.";
+        return;
+    }
+
+    result.innerHTML=`
+        <b>Domain:</b> ${domain}<br>
+        <b>Durum:</b> Test başarılı
+    `;
+}
 </script>
 
 </body>

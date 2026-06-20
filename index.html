@@ -84,6 +84,7 @@ input{
 
 input:focus{
     box-shadow:0 0 10px rgba(79,124,255,.4);
+    outline: none;
 }
 
 button{
@@ -106,6 +107,7 @@ button{
     color:white;
 
     font-weight:bold;
+    cursor: pointer;
 }
 
 button:hover{
@@ -124,6 +126,7 @@ button:hover{
 #dashboard{
     display:none;
     height:100vh;
+    flex-direction: row; /* Sidebar ve Main içeriğin yan yana durması için eklendi */
 
     background:
     linear-gradient(
@@ -137,6 +140,7 @@ button:hover{
     width:240px;
     background:#111521;
     padding:20px;
+    height: 100%;
 }
 
 .sidebar h2{
@@ -160,6 +164,7 @@ button:hover{
 .main{
     flex:1;
     padding:25px;
+    overflow-y: auto;
 }
 
 .card{
@@ -173,66 +178,48 @@ button:hover{
 <body>
 
 <div id="loginBox">
-
     <h2>keke#1337</h2>
-
     <input id="user" placeholder="Username">
     <input id="pass" type="password" placeholder="Password">
-
     <button onclick="login()">Giriş Yap</button>
-
     <p id="error"></p>
-
 </div>
 
 <div id="dashboard">
-
     <div class="sidebar">
-
         <h2>kekebyte #1337</h2>
-
-<div class="menu">
-    <div onclick="showPage('home')">Dashboard</div>
-    <div onclick="showPage('iplookup')">IP Lookup</div>
-    <div onclick="showPage('email')">Email Validator</div>
-    <div onclick="showPage('whois')">WHOIS Lookup</div>
-    <div onclick="showPage('dns')">DNS Lookup</div>
-    <div onclick="showPage('discordid')">Discord ID</div>
-    <div onclick="showPage('api')">API Status</div>
-    <div onclick="logout()">Logout</div>
-</div>
-
+        <div class="menu">
+            <div onclick="showPage('home')">Dashboard</div>
+            <div onclick="showPage('iplookup')">IP Lookup</div>
+            <div onclick="showPage('email')">Email Validator</div>
+            <div onclick="showPage('whois')">WHOIS Lookup</div>
+            <div onclick="showPage('dns')">DNS Lookup</div>
+            <div onclick="showPage('discordid')">Discord ID</div>
+            <div onclick="showPage('api')">API Status</div>
+            <div onclick="logout()">Logout</div>
+        </div>
     </div>
 
     <div class="main" id="content">
-
         <h2>Dashboard</h2>
-
         <div class="card">🟢 Sistem Durumu: Aktif</div>
         <div class="card">🔵 API Status: Online</div>
         <div class="card">👤 Kullanıcı: Admin</div>
-
     </div>
-
 </div>
 
 <script>
 function login(){
+    const user = document.getElementById("user").value.trim();
+    const pass = document.getElementById("pass").value.trim();
 
-    const user=document.getElementById("user").value.trim();
-    const pass=document.getElementById("pass").value.trim();
-
-    if(user==="admin" && pass==="admin"){
-
-        document.body.style.background =
-        "#05070d";
-
-        document.getElementById("loginBox").style.display="none";
-
-        document.getElementById("dashboard").style.display="flex";
-
+    if(user === "admin" && pass === "admin"){
+        document.body.style.background = "#05070d";
+        document.getElementById("loginBox").style.style.display = "none"; // Bazı tarayıcılar için garantiye alalım
+        document.getElementById("loginBox").remove(); // Login kutusunu tamamen uçurabiliriz
+        document.getElementById("dashboard").style.display = "flex";
     }else{
-        document.getElementById("error").innerText="Hatalı giriş!";
+        document.getElementById("error").innerText = "Hatalı giriş!";
     }
 }
 
@@ -241,99 +228,96 @@ function logout(){
 }
 
 function showPage(page){
+    const content = document.getElementById("content");
 
-    const content=document.getElementById("content");
-
-    if(page==="home"){
-        content.innerHTML=`
+    if(page === "home"){
+        content.innerHTML = `
         <h2>Dashboard</h2>
         <div class="card">🟢 Sistem Durumu: Aktif</div>
         <div class="card">🔵 API Status: Online</div>
         <div class="card">👤 Kullanıcı: Admin</div>`;
     }
-if(page==="dns"){
-    content.innerHTML=`
-    <h2>DNS Lookup</h2>
-    <div class="card">DNS sayfası çalışıyor</div>
-    `;
-}
 
-if(page==="discordid"){
-    content.innerHTML=`
-    <h2>Discord ID</h2>
-    <div class="card">Test sayfası</div>
-    `;
-}
+    if(page === "dns"){
+        content.innerHTML = `
+        <h2>🌐 DNS Lookup</h2>
+        <div class="card">
+            <input id="dnsInput" placeholder="example.com">
+            <button onclick="lookupDNS()">Sorgula</button>
+        </div>
+        <div class="card" id="dnsResult">
+            Sonuç burada görünecek.
+        </div>`;
+    }
 
-    if(page==="iplookup"){
-        content.innerHTML=`
+    if(page === "discordid"){
+        content.innerHTML = `
+        <h2>🎮 Discord ID</h2>
+        <div class="card">
+            <button onclick="loadDiscordData()">Yükle</button>
+        </div>
+        <div class="card" id="discordResult">Sonuç bekliyor...</div>`;
+    }
+
+    if(page === "iplookup"){
+        content.innerHTML = `
         <h2>🌐 IP Lookup</h2>
-
         <div class="card">
             <input id="ipInput" placeholder="8.8.8.8">
             <button onclick="lookupIP()">Sorgula</button>
         </div>
-
         <div class="card" id="ipResult">
             Sonuç burada görünecek.
         </div>`;
     }
 
-    if(page==="email"){
-        content.innerHTML=`
+    if(page === "email"){
+        content.innerHTML = `
         <h2>📧 Email Validator</h2>
-
         <div class="card">
             <input id="emailInput" placeholder="example@gmail.com">
             <button onclick="validateEmail()">Kontrol Et</button>
         </div>
-
         <div class="card" id="emailResult">
             Sonuç burada görünecek.
         </div>`;
     }
-if(page==="whois"){
-    content.innerHTML=`
-    <h2>🌍 WHOIS Lookup</h2>
 
-    <div class="card">
-        <input id="domainInput" placeholder="example.com">
-        <button onclick="lookupDomain()">Sorgula</button>
-    </div>
+    if(page === "whois"){
+        content.innerHTML = `
+        <h2>🌍 WHOIS Lookup</h2>
+        <div class="card">
+            <input id="domainInput" placeholder="example.com">
+            <button onclick="lookupDomain()">Sorgula</button>
+        </div>
+        <div class="card" id="domainResult">
+            Sonuç burada görünecek.
+        </div>`;
+    }
 
-    <div class="card" id="domainResult">
-        Sonuç burada görünecek.
-    </div>`;
-}
-    if(page==="api"){
-        content.innerHTML=`
+    if(page === "api"){
+        content.innerHTML = `
         <h2>API Status</h2>
         <div class="card">🟢 Main API Online</div>
         <div class="card">🟢 Backup API Online</div>`;
     }
 }
+
 async function lookupIP(){
-
-    const ip=document.getElementById("ipInput").value.trim();
-
+    const ip = document.getElementById("ipInput").value.trim();
     if(!ip){
         alert("IP gir.");
         return;
     }
 
-    const result=document.getElementById("ipResult");
-
-    result.innerHTML="🔄 Sorgulanıyor...";
+    const result = document.getElementById("ipResult");
+    result.innerHTML = "🔄 Sorgulanıyor...";
 
     try{
+        const response = await fetch(`https://ipapi.co/${ip}/json/`);
+        const data = await response.json();
 
-        const response=await fetch(
-            `https://ipapi.co/${ip}/json/`
-        );
-
-        const data=await response.json();
-
-        result.innerHTML=`
+        result.innerHTML = `
         <h3>Sonuç</h3>
         <b>IP:</b> ${data.ip || "-"}<br>
         <b>Ülke:</b> ${data.country_name || "-"}<br>
@@ -342,73 +326,45 @@ async function lookupIP(){
         <b>ISP:</b> ${data.org || "-"}<br>
         <b>ASN:</b> ${data.asn || "-"}
         `;
-
     }catch(error){
-
-        result.innerHTML="❌ Sorgu başarısız.";
+        result.innerHTML = "❌ Sorgu başarısız.";
     }
-}
-if(page==="dns"){
-    content.innerHTML=`
-    <h2>🌐 DNS Lookup</h2>
-
-    <div class="card">
-        <input id="dnsInput" placeholder="example.com">
-        <button onclick="lookupDNS()">Sorgula</button>
-    </div>
-
-    <div class="card" id="dnsResult">
-        Sonuç burada görünecek.
-    </div>`;
 }
 
 function validateEmail(){
-
-    const email=document.getElementById("emailInput").value.trim();
-
-    const result=document.getElementById("emailResult");
-
-    const regex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const email = document.getElementById("emailInput").value.trim();
+    const result = document.getElementById("emailResult");
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if(regex.test(email)){
-        result.innerHTML="✅ Geçerli email formatı";
+        result.innerHTML = "✅ Geçerli email formatı";
     }else{
-        result.innerHTML="❌ Geçersiz email formatı";
+        result.innerHTML = "❌ Geçersiz email formatı";
     }
 }
-async function lookupDomain(){
+
 async function lookupDNS(){
-
-    const domain =
-        document.getElementById("dnsInput").value.trim();
-
-    const result =
-        document.getElementById("dnsResult");
+    const domain = document.getElementById("dnsInput").value.trim();
+    const result = document.getElementById("dnsResult");
 
     if(!domain){
-        result.innerHTML="Domain gir.";
+        result.innerHTML = "Domain gir.";
         return;
     }
 
-    result.innerHTML="🔄 Sorgulanıyor...";
+    result.innerHTML = "🔄 Sorgulanıyor...";
 
     try{
-
-        const response = await fetch(
-            `https://dns.google/resolve?name=${domain}&type=A`
-        );
-
+        const response = await fetch(`https://dns.google/resolve?name=${domain}&type=A`);
         const data = await response.json();
 
         if(!data.Answer){
-            result.innerHTML="Kayıt bulunamadı.";
+            result.innerHTML = "Kayıt bulunamadı.";
             return;
         }
 
         let html = `<h3>${domain}</h3>`;
-
         data.Answer.forEach(record => {
-
             html += `
             <div style="margin-bottom:10px">
                 <b>IP:</b> ${record.data}
@@ -416,54 +372,37 @@ async function lookupDNS(){
         });
 
         result.innerHTML = html;
-
     }catch(err){
-
-        result.innerHTML =
-        "❌ DNS sorgusu başarısız.";
+        result.innerHTML = "❌ DNS sorgusu başarısız.";
     }
 }
 
-    const domain =
-        document.getElementById("domainInput").value.trim();
-
-    const result =
-        document.getElementById("domainResult");
+async function lookupDomain(){
+    const domain = document.getElementById("domainInput").value.trim();
+    const result = document.getElementById("domainResult");
 
     if(!domain){
-        result.innerHTML="Domain gir.";
+        result.innerHTML = "Domain gir.";
         return;
     }
 
-    result.innerHTML=`
+    result.innerHTML = `
         <b>Domain:</b> ${domain}<br>
-        <b>Durum:</b> Test başarılı
+        <b>Durum:</b> Test başarılı (Mock Veri)
     `;
 }
-if(page==="discordid"){
-    content.innerHTML=`
-    <h2>🎮 Discord ID</h2>
 
-    <div class="card">
-        <button onclick="loadDiscordData()">Yükle</button>
-    </div>
-
-    <div class="card" id="discordResult"></div>
-    `;
-}
 async function loadDiscordData(){
+    const result = document.getElementById("discordResult");
+    result.innerHTML = "🔄 Yükleniyor...";
 
-    const result =
-        document.getElementById("discordResult");
-
-    const response =
-        await fetch("./api/discordid");
-
-    const data =
-        await response.json();
-
-    result.innerHTML =
-        JSON.stringify(data,null,2);
+    try {
+        const response = await fetch("./api/discordid");
+        const data = await response.json();
+        result.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+    } catch(err) {
+        result.innerHTML = "❌ API'ye bağlanılamadı (Lokal /api/discordid yolu bulunamadı).";
+    }
 }
 </script>
 

@@ -192,13 +192,14 @@ button:hover{
         <h2>kekebyte #1337</h2>
 
 <div class="menu">
-    <div onclick="showPage('home')">🏠 Dashboard</div>
-    <div onclick="showPage('iplookup')">🌐 IP Lookup</div>
-    <div onclick="showPage('email')">📧 Email Validator</div>
-    <div onclick="showPage('whois')">🌍 WHOIS Lookup</div>
-    <div onclick="showPage('dns')">🌐 DNS Lookup</div>
-    <div onclick="showPage('api')">📡 API Status</div>
-    <div onclick="logout()">🚪 Logout</div>
+    <div onclick="showPage('home')">Dashboard</div>
+    <div onclick="showPage('iplookup')">IP Lookup</div>
+    <div onclick="showPage('email')">Email Validator</div>
+    <div onclick="showPage('whois')">WHOIS Lookup</div>
+    <div onclick="showPage('dns')">DNS Lookup</div>
+    <div onclick="showPage('discordid')">Discord ID</div>
+    <div onclick="showPage('api')">API Status</div>
+    <div onclick="logout()">Logout</div>
 </div>
 
     </div>
@@ -425,6 +426,31 @@ async function lookupDNS(){
         <b>Domain:</b> ${domain}<br>
         <b>Durum:</b> Test başarılı
     `;
+}
+if(page==="discordid"){
+    content.innerHTML=`
+    <h2>🎮 Discord ID</h2>
+
+    <div class="card">
+        <button onclick="loadDiscordData()">Yükle</button>
+    </div>
+
+    <div class="card" id="discordResult"></div>
+    `;
+}
+async function loadDiscordData(){
+
+    const result =
+        document.getElementById("discordResult");
+
+    const response =
+        await fetch("./api/discordid");
+
+    const data =
+        await response.json();
+
+    result.innerHTML =
+        JSON.stringify(data,null,2);
 }
 </script>
 

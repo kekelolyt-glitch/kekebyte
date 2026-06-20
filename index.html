@@ -210,15 +210,18 @@ button:hover{
 
 <script>
 function login(){
+
     const user = document.getElementById("user").value.trim();
     const pass = document.getElementById("pass").value.trim();
 
     if(user === "admin" && pass === "admin"){
-        document.body.style.background = "#05070d";
-        document.getElementById("loginBox").style.display = "none"; // Bazı tarayıcılar için garantiye alalım
-        document.getElementById("loginBox").remove();
+
+        document.getElementById("loginBox").style.display = "none";
+
         document.getElementById("dashboard").style.display = "flex";
+
     }else{
+
         document.getElementById("error").innerText = "Hatalı giriş!";
     }
 }

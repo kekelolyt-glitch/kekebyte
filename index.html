@@ -1,148 +1,1020 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
-<title>KEKEINTEL V6</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>KEKEINTEL OSINT</title>
 
 <style>
-body{
+
+*{
 margin:0;
-font-family:Arial;
-background:#000;
-color:#0ff;
+padding:0;
+box-sizing:border-box;
 }
 
-#panel{
-display:flex;
+
+body{
+
+font-family:Arial,sans-serif;
+
+color:white;
+
 height:100vh;
+
+overflow:hidden;
+
+background:
+
+linear-gradient(
+rgba(0,0,0,.92),
+rgba(0,0,0,.92)
+),
+
+url("eyes.jpg");
+
+background-size:cover;
+
 }
+
+
+
+/* LOGIN */
+
+
+#loginBox{
+
+position:absolute;
+
+top:50%;
+left:50%;
+
+transform:translate(-50%,-50%);
+
+width:420px;
+
+padding:30px;
+
+background:rgba(8,10,15,.9);
+
+backdrop-filter:blur(20px);
+
+border-radius:20px;
+
+box-shadow:
+
+0 0 50px black;
+
+}
+
+
+
+#loginBox h2{
+
+text-align:center;
+
+font-size:38px;
+
+letter-spacing:3px;
+
+color:#4f7cff;
+
+text-shadow:
+
+0 0 20px #4f7cff;
+
+margin-bottom:25px;
+
+}
+
+
+
+
+input{
+
+width:100%;
+
+padding:15px;
+
+margin-top:15px;
+
+background:#05070d;
+
+border:1px solid #222;
+
+border-radius:12px;
+
+color:white;
+
+}
+
+
+
+
+button{
+
+width:100%;
+
+padding:15px;
+
+margin-top:15px;
+
+border:none;
+
+border-radius:12px;
+
+background:
+
+linear-gradient(
+90deg,
+#355dff,
+#4f7cff
+);
+
+color:white;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+
+
+
+#error{
+
+text-align:center;
+
+color:red;
+
+margin-top:15px;
+
+}
+
+
+
+
+/* PANEL */
+
+
+#dashboard{
+
+display:none;
+
+height:100vh;
+
+background:
+
+radial-gradient(
+circle at top,
+#111b35,
+#020306
+);
+
+}
+
+
+
 
 .sidebar{
+
+
 width:260px;
-background:#050505;
-padding:20px;
-border-right:1px solid #0ff3;
+
+padding:25px;
+
+background:
+
+rgba(5,8,15,.85);
+
+border-right:
+
+1px solid rgba(79,124,255,.3);
+
 }
+
+
+
+
+.sidebar h2{
+
+
+color:#4f7cff;
+
+letter-spacing:3px;
+
+text-shadow:
+
+0 0 20px #4f7cff;
+
+margin-bottom:30px;
+
+
+}
+
+
+
 
 .menu div{
-padding:12px;
-margin:8px 0;
-background:#111;
+
+
+padding:15px;
+
+margin-bottom:12px;
+
+
+background:#11151d;
+
+
+border-radius:12px;
+
+
 cursor:pointer;
+
+
+transition:.3s;
+
+
 }
+
+
+
+.menu div:hover{
+
+
+transform:translateX(8px);
+
+
+box-shadow:
+
+0 0 20px #4f7cff;
+
+
+}
+
+
+
 
 .main{
+
+
 flex:1;
-padding:20px;
+
+padding:35px;
+
 overflow:auto;
+
+
 }
+
+
+
+
+.main h2{
+
+
+font-size:35px;
+
+letter-spacing:4px;
+
+text-shadow:
+
+0 0 20px #4f7cff;
+
+}
+
+
+
 
 .card{
-background:#0b0b0b;
-border:1px solid #0ff3;
-padding:15px;
-margin-top:10px;
+
+
+background:
+
+rgba(15,20,30,.9);
+
+
+padding:25px;
+
+
+margin-top:20px;
+
+
+border-radius:18px;
+
+
+border:1px solid #222;
+
+
+box-shadow:
+
+0 0 30px black;
+
+
 }
 
-input,button{
-width:100%;
-padding:10px;
-margin-top:8px;
-background:#111;
-color:#0ff;
-border:1px solid #0ff3;
+
+
+.badge{
+
+
+background:#00ff88;
+
+color:black;
+
+padding:6px 12px;
+
+border-radius:20px;
+
 }
+
 </style>
+
 </head>
+
+
 
 <body>
 
-<div id="panel">
+
+
+<div id="loginBox">
+
+
+<h2>
+KEKEINTEL
+</h2>
+
+
+<input id="username" placeholder="Username">
+
+
+<input id="password" type="password" placeholder="Password">
+
+
+<button onclick="login()">
+
+ACCESS
+
+</button>
+
+
+<div id="error"></div>
+
+
+</div>
+
+
+
+
+
+<div id="dashboard">
+
+
 
 <div class="sidebar">
-<h3>CYBER INTEL</h3>
+
+
+<h2>
+KEKEINTEL
+</h2>
+
+
 
 <div class="menu">
-<div onclick="load('ip')">IP</div>
-<div onclick="load('dns')">DNS</div>
-<div onclick="load('whois')">WHOIS</div>
-<div onclick="load('github')">GITHUB</div>
+
+
+<div onclick="page('home')">
+Dashboard
 </div>
+
+
+<div onclick="page('ip')">
+IP Intelligence
+</div>
+
+
+<div onclick="page('dns')">
+DNS Scanner
+</div>
+
+
+<div onclick="page('whois')">
+WHOIS
+</div>
+
+
+<div onclick="page('email')">
+Email Check
+</div>
+
+
+<div onclick="page('api')">
+API Core
+</div>
+
+
+<div onclick="logout()">
+Logout
+</div>
+
 
 </div>
 
-<div class="main" id="view"></div>
 
 </div>
+
+
+
+
+
+
+<div class="main" id="content">
+
+
+<h2>
+☠ KEKEINTEL CORE
+</h2>
+
+
+
+<div class="card">
+
+System:
+
+<span class="badge">
+ONLINE
+</span>
+
+</div>
+
+
+
+<div class="card">
+
+OSINT Modules Ready
+
+<br><br>
+
+IP ✔
+
+<br>
+
+DNS ✔
+
+<br>
+
+WHOIS ✔
+
+<br>
+
+EMAIL ✔
+
+</div>
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
 
 <script>
 
-function load(t){
 
-if(t==="ip"){
-view.innerHTML=`
-<h2>IP INTEL</h2>
-<input id="ip">
-<button onclick="ipScan()">SCAN</button>
-<div id="r"></div>
+
+function login(){
+
+
+let u=document.getElementById("username").value;
+
+let p=document.getElementById("password").value;
+
+
+
+if(u==="admin" && p==="admin"){
+
+
+document.getElementById("loginBox").style.display="none";
+
+
+document.getElementById("dashboard").style.display="flex";
+
+
+}
+
+
+else{
+
+
+document.getElementById("error").innerHTML="ACCESS DENIED";
+
+
+}
+
+
+}
+
+
+
+
+
+
+function logout(){
+
+location.reload();
+
+}
+
+
+
+
+
+
+
+
+function page(type){
+
+
+let c=document.getElementById("content");
+
+
+
+
+if(type==="home"){
+
+
+c.innerHTML=`
+
+<h2>
+☠ KEKEINTEL CORE
+</h2>
+
+
+<div class="card">
+
+System Online
+
+<span class="badge">
+
+ACTIVE
+
+</span>
+
+</div>
+
+
 `;
+
 }
 
-if(t==="dns"){
-view.innerHTML=`
-<h2>DNS</h2>
-<input id="dns">
-<button onclick="dnsScan()">SCAN</button>
-<div id="r"></div>
+
+
+
+
+
+if(type==="ip"){
+
+
+c.innerHTML=`
+
+<h2>🌐 IP INTELLIGENCE</h2>
+
+
+<div class="card">
+
+
+<input id="ipInput" placeholder="8.8.8.8">
+
+
+<button onclick="ipScan()">
+
+SCAN
+
+</button>
+
+
+</div>
+
+
+<div class="card" id="ipResult">
+
+Waiting...
+
+</div>
+
 `;
+
 }
 
-if(t==="whois"){
-view.innerHTML=`
-<h2>WHOIS</h2>
-<input id="whois">
-<button onclick="whoisScan()">SCAN</button>
-<div id="r"></div>
+
+
+
+
+
+if(type==="dns"){
+
+
+c.innerHTML=`
+
+<h2>🌐 DNS SCANNER</h2>
+
+
+<div class="card">
+
+
+<input id="dnsInput" placeholder="google.com">
+
+
+<button onclick="dnsScan()">
+
+SCAN
+
+</button>
+
+
+</div>
+
+
+<div class="card" id="dnsResult">
+
+Waiting...
+
+</div>
+
+
 `;
+
 }
 
-if(t==="github"){
-view.innerHTML=`
-<h2>GITHUB</h2>
-<input id="gh">
-<button onclick="ghScan()">SCAN</button>
-<div id="r"></div>
+
+
+
+
+
+
+if(type==="whois"){
+
+
+c.innerHTML=`
+
+<h2>🌍 WHOIS DATABASE</h2>
+
+
+<div class="card">
+
+
+<input id="whoisInput" placeholder="example.com">
+
+
+<button onclick="whoisScan()">
+
+SEARCH
+
+</button>
+
+
+</div>
+
+
+<div class="card" id="whoisResult">
+
+Waiting...
+
+</div>
+
+
 `;
-}
 
 }
 
-/* API CALLS */
+
+
+
+
+
+
+if(type==="email"){
+
+
+c.innerHTML=`
+
+<h2>📧 EMAIL CHECK</h2>
+
+
+<div class="card">
+
+
+<input id="emailInput" placeholder="mail@gmail.com">
+
+
+<button onclick="emailScan()">
+
+CHECK
+
+</button>
+
+
+</div>
+
+
+<div class="card" id="emailResult">
+
+Waiting...
+
+</div>
+
+
+`;
+
+}
+
+
+
+
+
+
+
+
+if(type==="api"){
+
+
+c.innerHTML=`
+
+<h2>⚡ API CORE</h2>
+
+
+<div class="card">
+
+🟢 IP API ONLINE
+
+</div>
+
+
+<div class="card">
+
+🟢 GOOGLE DNS ONLINE
+
+</div>
+
+
+<div class="card">
+
+🟢 RDAP WHOIS ONLINE
+
+</div>
+
+
+`;
+
+}
+
+
+}
+
+
+
+
+
+
+
+
+
 
 async function ipScan(){
-let r=await fetch("/api/ip/"+ip.value);
-r=await r.json();
-document.getElementById("r").innerHTML=JSON.stringify(r,null,2);
+
+
+let ip=document.getElementById("ipInput").value;
+
+
+let r=document.getElementById("ipResult");
+
+
+r.innerHTML="Scanning...";
+
+
+let res=await fetch(
+
+"https://ipapi.co/"+ip+"/json/"
+
+);
+
+
+let d=await res.json();
+
+
+
+r.innerHTML=`
+
+IP:
+${d.ip}
+
+<br>
+
+Country:
+${d.country_name}
+
+<br>
+
+City:
+${d.city}
+
+<br>
+
+ISP:
+${d.org}
+
+`;
+
+
+
 }
+
+
+
+
+
+
+
+
 
 async function dnsScan(){
-let r=await fetch("/api/dns/"+dns.value);
-r=await r.json();
-document.getElementById("r").innerHTML=JSON.stringify(r.Answer||r);
+
+
+let domain=document.getElementById("dnsInput").value;
+
+
+let r=document.getElementById("dnsResult");
+
+
+r.innerHTML="Scanning...";
+
+
+
+let res=await fetch(
+
+"https://dns.google/resolve?name="+domain+"&type=A"
+
+);
+
+
+
+let d=await res.json();
+
+
+let out="";
+
+
+if(d.Answer){
+
+
+d.Answer.forEach(x=>{
+
+
+out+=x.data+"<br>";
+
+
+});
+
+
 }
+
+
+else{
+
+
+out="No Record";
+
+
+}
+
+
+
+r.innerHTML=out;
+
+
+}
+
+
+
+
+
+
+
+
 
 async function whoisScan(){
-let r=await fetch("/api/whois/"+whois.value);
-r=await r.json();
-document.getElementById("r").innerHTML=JSON.stringify(r,null,2);
+
+
+let domain=document.getElementById("whoisInput").value;
+
+
+let r=document.getElementById("whoisResult");
+
+
+r.innerHTML="Searching...";
+
+
+let res=await fetch(
+
+"https://rdap.org/domain/"+domain
+
+);
+
+
+
+let d=await res.json();
+
+
+
+r.innerHTML=
+
+`
+
+Domain:
+
+${d.ldhName}
+
+<br><br>
+
+Status:
+
+${d.status}
+
+`;
+
+
+
 }
 
-async function ghScan(){
-let r=await fetch("/api/github/"+gh.value);
-r=await r.json();
-document.getElementById("r").innerHTML=JSON.stringify(r,null,2);
+
+
+
+
+
+
+
+
+function emailScan(){
+
+
+let email=document.getElementById("emailInput").value;
+
+
+let r=document.getElementById("emailResult");
+
+
+
+let check=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+
+if(check.test(email)){
+
+
+r.innerHTML=
+
+`
+
+✅ Valid
+
+<br>
+
+Provider:
+
+${email.split("@")[1]}
+
+`;
+
 }
+
+
+else{
+
+
+r.innerHTML="❌ Invalid";
+
+
+}
+
+
+
+}
+
+
 
 </script>
 
+
+
 </body>
-</html>
+
+</html>kanka benım kodum bu kadardı nasıl 120 satıra dustu

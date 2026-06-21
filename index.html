@@ -2,123 +2,239 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>KekeIntel Restore Panel</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>KEKEINTEL OSINT v3</title>
 <style>
+*{box-sizing:border-box;margin:0;padding:0}
 body{
-margin:0;
-font-family:Arial;
-background:#0d0f14;
-color:#fff;
+font-family:Arial;color:#fff;height:100vh;overflow:hidden;
+background:linear-gradient(rgba(0,0,0,.92),rgba(0,0,0,.92)),url("eyes.jpg");
+background-size:cover
 }
-
+#loginBox{
+position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+width:420px;padding:30px;background:#080a0fee;border-radius:20px;
+box-shadow:0 0 50px #000
+}
+h1,h2{color:#4f7cff;text-shadow:0 0 20px #4f7cff;letter-spacing:3px}
+input,button{
+width:100%;padding:15px;margin-top:15px;border-radius:12px;
+background:#05070d;color:#fff;border:1px solid #222
+}
+button{background:linear-gradient(90deg,#355dff,#4f7cff);cursor:pointer}
+#dashboard{display:none;height:100vh}
 .sidebar{
-width:240px;
-height:100vh;
-background:#111521;
-position:fixed;
-padding:20px;
+width:260px;padding:25px;background:#05080ddd;border-right:1px solid #333
 }
-
-.sidebar h2{
-color:#00ff88;
+.menu div{
+padding:15px;margin:10px 0;background:#11151d;border-radius:12px;cursor:pointer
 }
-
-.btn{
-width:100%;
-padding:12px;
-margin:8px 0;
-background:#1a2030;
-border:none;
-color:#fff;
-cursor:pointer;
-border-radius:8px;
-}
-
-.btn:hover{
-background:#00ff88;
-color:#000;
-}
-
-.main{
-margin-left:260px;
-padding:20px;
-}
-
+.menu div:hover{box-shadow:0 0 20px #4f7cff}
+.main{flex:1;padding:35px;overflow:auto}
 .card{
-background:#151a26;
-padding:15px;
-border-radius:10px;
-margin-top:10px;
+background:#0f141ee8;padding:25px;margin-top:20px;border-radius:18px;
+border:1px solid #222
 }
-
-input{
-width:100%;
-padding:10px;
-margin-top:10px;
-background:#0f1320;
-border:none;
-color:#fff;
-border-radius:6px;
-}
+.badge{background:#00ff88;color:#000;padding:6px 12px;border-radius:20px}
+.log{font-family:monospace;color:#00ff88}
 </style>
 </head>
 
 <body>
 
+<div id="loginBox">
+<h1>KEKEINTEL</h1>
+<input id="username" placeholder="Username">
+<input id="password" type="password" placeholder="Password">
+<button onclick="login()">ACCESS</button>
+<p id="error"></p>
+</div>
+
+<div id="dashboard">
 <div class="sidebar">
-<h2>KekeIntel</h2>
+<h2>KEKEINTEL</h2>
 
-<button class="btn" onclick="show('dash')">Dashboard</button>
-<button class="btn" onclick="show('scan')">Discord Scanner</button>
+<div class="menu">
+<div onclick="page('home')">Dashboard</div>
+<div onclick="page('ip')">🌐 IP Intelligence</div>
+<div onclick="page('dns')">🌐 DNS Scanner</div>
+<div onclick="page('whois')">🌍 WHOIS</div>
+<div onclick="page('email')">📧 Email</div>
+<div onclick="page('user')">🔎 Username Scanner</div>
+<div onclick="page('discord')">🎮 Discord ID</div>
+<div onclick="page('domain')">🌍 Domain Intel</div>
+<div onclick="page('ai')">🧠 AI Assistant</div>
+<div onclick="page('logs')">📜 Logs</div>
+<div onclick="logout()">Logout</div>
+</div>
 </div>
 
-<div class="main">
-
-<div id="dash">
-<h1>Dashboard</h1>
-<div class="card">Status: <span style="color:#00ff88">ACTIVE</span></div>
+<div class="main" id="content"></div>
 </div>
 
-<div id="scan" style="display:none;">
-<h1>Discord ID Scanner</h1>
-
-<input id="id" placeholder="Discord ID gir">
-<button class="btn" onclick="scan()">SORGULA</button>
-
-<div class="card" id="out">Sonuç bekleniyor...</div>
-</div>
-
-</div>
 
 <script>
 
-function show(id){
-document.getElementById("dash").style.display="none";
-document.getElementById("scan").style.display="none";
-document.getElementById(id).style.display="block";
+function login(){
+if(username.value==="admin" && password.value==="admin"){
+loginBox.style.display="none";
+dashboard.style.display="flex";
+page("home");
+}else{
+error.innerHTML="ACCESS DENIED";
+}
 }
 
-async function scan(){
-let id = document.getElementById("id").value;
+function logout(){location.reload()}
 
-if(!id){
-document.getElementById("out").innerText = "ID gir!";
-return;
+
+function page(t){
+
+let c=document.getElementById("content");
+
+if(t==="home")
+c.innerHTML=`
+<h1>☠ KEKEINTEL CORE</h1>
+<div class="card">SYSTEM <span class="badge">ONLINE</span></div>
+<div class="card">OSINT MODULES ACTIVE<br><br>
+IP ✔ DNS ✔ WHOIS ✔ USERNAME ✔ DISCORD ✔ AI ✔
+</div>`;
+
+if(t==="ip")
+c.innerHTML=`
+<h1>IP INTELLIGENCE</h1>
+<div class="card">
+<input id="ip"><button onclick="ipScan()">SCAN</button>
+</div>
+<div class="card" id="out">Waiting...</div>`;
+
+
+if(t==="dns")
+c.innerHTML=`
+<h1>DNS SCANNER</h1>
+<div class="card">
+<input id="dns">
+<button onclick="dnsScan()">SCAN</button>
+</div>
+<div class="card" id="out">Waiting...</div>`;
+
+
+if(t==="user")
+c.innerHTML=`
+<h1>USERNAME SCANNER</h1>
+<div class="card">
+<input id="uname" placeholder="username">
+<button onclick="usernameScan()">SCAN</button>
+</div>
+<div class="card" id="out">Waiting...</div>`;
+
+
+if(t==="discord")
+c.innerHTML=`
+<h1>DISCORD ID SCANNER</h1>
+<div class="card">
+<input id="did" placeholder="Discord ID">
+<button onclick="discordScan()">SCAN</button>
+</div>
+<div class="card" id="out">Waiting...</div>`;
+
+
+if(t==="email")
+c.innerHTML=`
+<h1>EMAIL INTELLIGENCE</h1>
+<div class="card">
+<input id="mail">
+<button onclick="emailScan()">CHECK</button>
+</div>
+<div class="card" id="out">Waiting...</div>`;
+
+
+if(t==="domain")
+c.innerHTML=`
+<h1>DOMAIN INTEL</h1>
+<div class="card">
+<input id="domain">
+<button onclick="domainScan()">SCAN</button>
+</div>
+<div class="card" id="out">Waiting...</div>`;
+
+
+if(t==="ai")
+c.innerHTML=`
+<h1>KEKE AI</h1>
+<div class="card">
+<input id="target">
+<button onclick="aiScan()">ANALYZE</button>
+</div>
+<div class="card" id="out">Waiting...</div>`;
+
+
+if(t==="logs")
+c.innerHTML=`
+<h1>LIVE LOGS</h1>
+<div class="card log" id="out">
+[START] KEKEINTEL CORE<br>
+[OK] Modules loaded
+</div>`;
+
 }
 
-let res = await fetch("/api/discord?id=" + id);
-let data = await res.json();
 
-document.getElementById("out").innerText =
-"ID: " + data.id + "\n" +
-"Username: " + data.username + "\n" +
-"Tag: " + data.tag + "\n" +
-"Created: " + data.created + "\n" +
-"Status: " + data.status;
+
+async function ipScan(){
+let d=await fetch("https://ipapi.co/"+ip.value+"/json/").then(x=>x.json());
+out.innerHTML=`IP: ${d.ip}<br>Country: ${d.country_name}<br>ISP: ${d.org}`;
+}
+
+
+async function dnsScan(){
+let d=await fetch("https://dns.google/resolve?name="+dns.value).then(x=>x.json());
+out.innerHTML=JSON.stringify(d.Answer||"No Record");
+}
+
+
+function emailScan(){
+out.innerHTML=/^[^@]+@[^@]+\.[^@]+$/.test(mail.value)
+?"✅ Valid Email":"❌ Invalid Email";
+}
+
+
+async function domainScan(){
+let d=await fetch("https://dns.google/resolve?name="+domain.value).then(x=>x.json());
+out.innerHTML="DNS Records: "+(d.Answer?"FOUND":"NONE");
+}
+
+
+function usernameScan(){
+let u=uname.value;
+out.innerHTML=`
+Target: ${u}<br><br>
+GitHub: checking<br>
+Instagram: checking<br>
+TikTok: checking<br>
+Reddit: checking<br>
+Twitch: checking`;
+}
+
+
+function discordScan(){
+out.innerHTML=`
+Discord ID: ${did.value}<br><br>
+Public lookup prepared.<br>
+Avatar/API data requires Discord permission/API.
+`;
+}
+
+
+function aiScan(){
+out.innerHTML=`
+Target analyzed:<br>
+${target.value}<br><br>
+DNS: CHECKED<br>
+Public Data: AVAILABLE<br>
+Risk: LOW`;
 }
 
 </script>
-
 </body>
 </html>

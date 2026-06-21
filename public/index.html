@@ -1,129 +1,73 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KEKEINTEL v3 - INTEL PANEL</title>
+<title>KEKEINTEL V6</title>
 
 <style>
 body{
 margin:0;
 font-family:Arial;
-background:#05070d;
-color:white;
-overflow:hidden;
+background:#000;
+color:#0ff;
 }
 
-#login{
-position:absolute;
-top:50%;left:50%;
-transform:translate(-50%,-50%);
-width:360px;
-padding:25px;
-background:#0b0f1a;
-border-radius:16px;
-box-shadow:0 0 40px black;
-}
-
-input,button{
-width:100%;
-padding:12px;
-margin-top:10px;
-border-radius:10px;
-border:none;
-}
-
-input{
-background:#0e1422;
-color:white;
-border:1px solid #222;
-}
-
-button{
-background:#4f7cff;
-color:white;
-font-weight:bold;
-cursor:pointer;
-}
-
-#app{
-display:none;
+#panel{
+display:flex;
 height:100vh;
-flex-direction:row;
 }
 
 .sidebar{
 width:260px;
-background:#0a0f1a;
+background:#050505;
 padding:20px;
-border-right:1px solid #1f2a44;
+border-right:1px solid #0ff3;
 }
 
 .menu div{
 padding:12px;
 margin:8px 0;
-background:#111827;
-border-radius:10px;
+background:#111;
 cursor:pointer;
-transition:.2s;
-}
-
-.menu div:hover{
-background:#1b2a4a;
 }
 
 .main{
 flex:1;
-padding:25px;
+padding:20px;
 overflow:auto;
 }
 
 .card{
-background:#0f172a;
-padding:18px;
-border-radius:12px;
-margin-top:15px;
-border:1px solid #1f2a44;
+background:#0b0b0b;
+border:1px solid #0ff3;
+padding:15px;
+margin-top:10px;
 }
 
-.badge{
-background:#00ff88;
-color:black;
-padding:4px 10px;
-border-radius:10px;
-font-size:12px;
+input,button{
+width:100%;
+padding:10px;
+margin-top:8px;
+background:#111;
+color:#0ff;
+border:1px solid #0ff3;
 }
-
-h2{margin:0 0 10px 0;}
-small{opacity:.7}
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
-<div id="login">
-<h2>KEKEINTEL v3</h2>
-<input id="u" placeholder="username">
-<input id="p" type="password" placeholder="password">
-<button onclick="login()">ENTER</button>
-</div>
-
-<!-- APP -->
-<div id="app">
+<div id="panel">
 
 <div class="sidebar">
-<h3>INTEL MENU</h3>
+<h3>CYBER INTEL</h3>
+
 <div class="menu">
-<div onclick="load('home')">Dashboard</div>
-<div onclick="load('ip')">IP Intel</div>
-<div onclick="load('dns')">DNS Intel</div>
+<div onclick="load('ip')">IP</div>
+<div onclick="load('dns')">DNS</div>
 <div onclick="load('whois')">WHOIS</div>
-<div onclick="load('discord')">Discord</div>
-<div onclick="load('user')">Username</div>
-<div onclick="exportData()">Export JSON</div>
-<div onclick="logout()">Logout</div>
+<div onclick="load('github')">GITHUB</div>
 </div>
+
 </div>
 
 <div class="main" id="view"></div>
@@ -132,247 +76,70 @@ small{opacity:.7}
 
 <script>
 
-/* ======================
-API LAYER (FIX CORE)
-====================== */
+function load(t){
 
-async function api(url){
-try{
-let r = await fetch(url);
-if(!r.ok) throw new Error("API ERROR");
-return await r.json();
-}catch(e){
-return null;
-}
-}
-
-/* GLOBAL STORAGE */
-let lastData = {};
-
-/* ======================
-LOGIN
-====================== */
-
-function login(){
-if(u.value==="admin" && p.value==="admin"){
-login.style.display="none";
-app.style.display="flex";
-load("home");
-}
-}
-
-/* ======================
-ROUTER
-====================== */
-
-function load(page){
-
-if(page==="home"){
-view.innerHTML=`
-<h2>KEKEINTEL CORE</h2>
-<div class="card">Status: <span class="badge">ONLINE</span></div>
-<div class="card"><small>INTEL SYSTEM READY</small></div>
-`;
-}
-
-/* IP */
-if(page==="ip"){
+if(t==="ip"){
 view.innerHTML=`
 <h2>IP INTEL</h2>
-<div class="card">
-<input id="ip" placeholder="8.8.8.8">
+<input id="ip">
 <button onclick="ipScan()">SCAN</button>
-</div>
-<div class="card" id="ipr">READY</div>
+<div id="r"></div>
 `;
 }
 
-/* DNS */
-if(page==="dns"){
+if(t==="dns"){
 view.innerHTML=`
-<h2>DNS INTEL</h2>
-<div class="card">
-<input id="dns" placeholder="google.com">
+<h2>DNS</h2>
+<input id="dns">
 <button onclick="dnsScan()">SCAN</button>
-</div>
-<div class="card" id="dnsr">READY</div>
+<div id="r"></div>
 `;
 }
 
-/* WHOIS */
-if(page==="whois"){
+if(t==="whois"){
 view.innerHTML=`
-<h2>WHOIS INTEL</h2>
-<div class="card">
-<input id="whois" placeholder="example.com">
-<button onclick="whoisScan()">SEARCH</button>
-</div>
-<div class="card" id="whoisr">READY</div>
+<h2>WHOIS</h2>
+<input id="whois">
+<button onclick="whoisScan()">SCAN</button>
+<div id="r"></div>
 `;
 }
 
-/* DISCORD */
-if(page==="discord"){
+if(t==="github"){
 view.innerHTML=`
-<h2>DISCORD INTEL</h2>
-<div class="card">
-<input id="dc" placeholder="User ID">
-<button onclick="discordScan()">LOOKUP</button>
-</div>
-<div class="card" id="dcr">READY</div>
-`;
-}
-
-/* USER */
-if(page==="user"){
-view.innerHTML=`
-<h2>USERNAME INTEL</h2>
-<div class="card">
-<input id="usr" placeholder="username">
-<button onclick="userScan()">SCAN</button>
-</div>
-<div class="card" id="usrR">READY</div>
+<h2>GITHUB</h2>
+<input id="gh">
+<button onclick="ghScan()">SCAN</button>
+<div id="r"></div>
 `;
 }
 
 }
 
-/* ======================
-IP INTEL
-====================== */
+/* API CALLS */
 
 async function ipScan(){
-let ip = ip.value;
-ipr.innerHTML="loading...";
-
-let d = await api("https://ipapi.co/"+ip+"/json/");
-
-if(!d){
-ipr.innerHTML="ERROR";
-return;
+let r=await fetch("/api/ip/"+ip.value);
+r=await r.json();
+document.getElementById("r").innerHTML=JSON.stringify(r,null,2);
 }
-
-lastData.ip=d;
-
-ipr.innerHTML=`
-IP: ${d.ip || "-"}<br>
-Country: ${d.country_name || "-"}<br>
-City: ${d.city || "-"}<br>
-ISP: ${d.org || "-"}
-`;
-}
-
-/* ======================
-DNS INTEL
-====================== */
 
 async function dnsScan(){
-let dname = dns.value;
-dnsr.innerHTML="loading...";
-
-let d = await api("https://dns.google/resolve?name="+dname+"&type=A");
-
-if(!d || !d.Answer){
-dnsr.innerHTML="NO RECORD";
-return;
+let r=await fetch("/api/dns/"+dns.value);
+r=await r.json();
+document.getElementById("r").innerHTML=JSON.stringify(r.Answer||r);
 }
-
-lastData.dns=d;
-
-dnsr.innerHTML = d.Answer.map(x=>x.data).join("<br>");
-}
-
-/* ======================
-WHOIS INTEL
-====================== */
 
 async function whoisScan(){
-let domain = whois.value;
-whoisr.innerHTML="loading...";
-
-let d = await api("https://rdap.org/domain/"+domain);
-
-if(!d){
-whoisr.innerHTML="NOT FOUND";
-return;
+let r=await fetch("/api/whois/"+whois.value);
+r=await r.json();
+document.getElementById("r").innerHTML=JSON.stringify(r,null,2);
 }
 
-lastData.whois=d;
-
-whoisr.innerHTML=`
-Domain: ${d.ldhName || domain}<br>
-Status: ${(d.status||[]).join(", ")}
-`;
-}
-
-/* ======================
-DISCORD INTEL (SAFE PUBLIC API)
-====================== */
-
-async function discordScan(){
-let id = dc.value;
-dcr.innerHTML="loading...";
-
-let d = await api("https://discordlookup.mesalytic.moe/v1/user/"+id);
-
-if(!d){
-dcr.innerHTML="ERROR";
-return;
-}
-
-lastData.discord=d;
-
-dcr.innerHTML=`
-Username: ${d.username || "-"}<br>
-Global: ${d.global_name || "-"}<br>
-ID: ${d.id || id}<br>
-Bot: ${d.bot ? "YES":"NO"}
-`;
-}
-
-/* ======================
-USERNAME INTEL
-====================== */
-
-async function userScan(){
-let u = usr.value;
-usrR.innerHTML="loading...";
-
-let out=[];
-
-/* GitHub */
-let g = await api("https://api.github.com/users/"+u);
-if(g) out.push("GitHub: EXISTS");
-
-/* basic signals */
-out.push("Instagram: manual check");
-out.push("TikTok: manual check");
-
-lastData.user = {username:u,results:out};
-
-usrR.innerHTML = out.join("<br>");
-}
-
-/* ======================
-EXPORT SYSTEM
-====================== */
-
-function exportData(){
-let blob = new Blob([JSON.stringify(lastData,null,2)],{type:"application/json"});
-let url = URL.createObjectURL(blob);
-
-let a=document.createElement("a");
-a.href=url;
-a.download="intel_report.json";
-a.click();
-}
-
-/* ======================
-LOGOUT
-====================== */
-
-function logout(){
-location.reload();
+async function ghScan(){
+let r=await fetch("/api/github/"+gh.value);
+r=await r.json();
+document.getElementById("r").innerHTML=JSON.stringify(r,null,2);
 }
 
 </script>

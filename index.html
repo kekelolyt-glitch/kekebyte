@@ -376,7 +376,24 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background-
           Weather
         </div>
       </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Recon Suite</div>
+        <div style="padding:.1rem 1.25rem .5rem;font-size:10px;color:var(--text3);letter-spacing:.05em">PUBLIC SECURITY INTEL</div>
+        <div class="sidebar-item" data-page="page-cve">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+          CVE Search
+        </div>
+        <div class="sidebar-item" data-page="page-wayback">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Wayback Snapshot
+        </div>
+        <div class="sidebar-item" data-page="page-portcheck">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          Port Check
+        </div>
+      </div>
     </aside>
+
 
     <!-- Main content -->
     <main class="main">
@@ -602,6 +619,54 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background-
         <div style="font-size:12px;color:var(--text3)">Uses Open-Meteo public API · No auth required</div>
       </div>
 
+      <!-- CVE Search -->
+      <div class="page" id="page-cve">
+        <div class="tool-header">
+          <h2>CVE Search</h2>
+          <p>Search the NVD (National Vulnerability Database) for known CVEs by keyword or ID.</p>
+        </div>
+        <div class="tool-box">
+          <div class="tool-row">
+            <input class="tool-input" id="cveInput" placeholder="Keyword (e.g. apache) or CVE ID (e.g. CVE-2021-44228)" type="text"/>
+            <button class="tool-btn" id="cveBtn">Search</button>
+          </div>
+          <div class="result-area" id="cveResult"><div class="result-empty">Enter a keyword or CVE ID above and click Search.</div></div>
+        </div>
+        <div style="font-size:12px;color:var(--text3)">Uses NIST NVD CVE API 2.0 · Public data only</div>
+      </div>
+
+      <!-- Wayback Snapshot -->
+      <div class="page" id="page-wayback">
+        <div class="tool-header">
+          <h2>Wayback Snapshot</h2>
+          <p>Check if a URL has an archived snapshot in the Internet Archive's Wayback Machine.</p>
+        </div>
+        <div class="tool-box">
+          <div class="tool-row">
+            <input class="tool-input" id="waybackInput" placeholder="URL (e.g. example.com or example.com/page)" type="text"/>
+            <button class="tool-btn" id="waybackBtn">Check Archive</button>
+          </div>
+          <div class="result-area" id="waybackResult"><div class="result-empty">Enter a URL above and click Check Archive.</div></div>
+        </div>
+        <div style="font-size:12px;color:var(--text3)">Uses Internet Archive Wayback Availability API · Public data only</div>
+      </div>
+
+      <!-- Port Check -->
+      <div class="page" id="page-portcheck">
+        <div class="tool-header">
+          <h2>Port Check</h2>
+          <p>Check common web service ports (HTTP, HTTPS) on a host you own or have permission to test. This performs a lightweight reachability check, not a full network port scan.</p>
+        </div>
+        <div class="tool-box">
+          <div class="tool-row">
+            <input class="tool-input" id="portInput" placeholder="Hostname (e.g. example.com)" type="text"/>
+            <button class="tool-btn" id="portBtn">Check</button>
+          </div>
+          <div class="result-area" id="portResult"><div class="result-empty">Enter a hostname above and click Check. Only use this on hosts you own or are authorized to test.</div></div>
+        </div>
+        <div style="font-size:12px;color:var(--text3)">Browser-based reachability check on common web ports only · No raw port scanning</div>
+      </div>
+
     </main>
   </div>
 </div>
@@ -719,6 +784,9 @@ document.addEventListener('DOMContentLoaded', function(){
   document.getElementById('npmBtn').addEventListener('click', lookupNpm);
   document.getElementById('cryptoBtn').addEventListener('click', lookupCrypto);
   document.getElementById('weatherBtn').addEventListener('click', lookupWeather);
+  document.getElementById('cveBtn').addEventListener('click', lookupCVE);
+  document.getElementById('waybackBtn').addEventListener('click', lookupWayback);
+  document.getElementById('portBtn').addEventListener('click', lookupPortCheck);
 
   // Enter ile tetikleme (tool inputları)
   const enterMap = {
@@ -732,7 +800,10 @@ document.addEventListener('DOMContentLoaded', function(){
     securityInput: lookupSecurity,
     npmInput: lookupNpm,
     cryptoInput: lookupCrypto,
-    weatherInput: lookupWeather
+    weatherInput: lookupWeather,
+    cveInput: lookupCVE,
+    waybackInput: lookupWayback,
+    portInput: lookupPortCheck
   };
   Object.keys(enterMap).forEach(function(id){
     const el=document.getElementById(id);
@@ -1194,8 +1265,105 @@ async function lookupWeather(){
   }catch(e){el.innerHTML=`<div class="result-error">Error: ${e.message}</div>`;}
 }
 
+// ===== CVE SEARCH =====
+async function lookupCVE(){
+  if(!requireAuth())return;
+  const q=document.getElementById('cveInput').value.trim();
+  if(!q)return showToast('Enter a keyword or CVE ID');
+  const el=document.getElementById('cveResult');
+  el.innerHTML='<div class="result-loading">Querying NVD vulnerability database...</div>';
+  addHistory('CVE',q);
+  try{
+    const isCveId=/^CVE-\d{4}-\d+$/i.test(q);
+    const url=isCveId
+      ? `https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=${encodeURIComponent(q.toUpperCase())}`
+      : `https://services.nvd.nist.gov/rest/json/cves/2.0?keywordSearch=${encodeURIComponent(q)}&resultsPerPage=8`;
+    const r=await fetch(url,{signal:AbortSignal.timeout(10000)});
+    if(!r.ok)throw new Error(`NVD API returned ${r.status}. Try a more specific keyword or wait a moment (public rate limit).`);
+    const d=await r.json();
+    if(!d.vulnerabilities||!d.vulnerabilities.length){
+      el.innerHTML='<div class="result-empty">No CVEs found for this query.</div>';
+      return;
+    }
+    const cards=d.vulnerabilities.map(v=>{
+      const cve=v.cve;
+      const desc=(cve.descriptions.find(x=>x.lang==='en')||{}).value||'No description available.';
+      const metrics=cve.metrics||{};
+      let score='—', severity='—';
+      const cvssGroup=metrics.cvssMetricV31||metrics.cvssMetricV30||metrics.cvssMetricV2;
+      if(cvssGroup&&cvssGroup.length){
+        score=cvssGroup[0].cvssData.baseScore;
+        severity=cvssGroup[0].cvssData.baseSeverity||(score>=9?'CRITICAL':score>=7?'HIGH':score>=4?'MEDIUM':'LOW');
+      }
+      const sevBadge=severity==='CRITICAL'||severity==='HIGH'?'badge-red':severity==='MEDIUM'?'badge-blue':'badge-green';
+      return `<div class="repo-card">
+        <div class="rc-name"><a href="https://nvd.nist.gov/vuln/detail/${cve.id}" target="_blank">${cve.id} ↗</a> <span class="${sevBadge}" style="margin-left:.5rem">${severity} ${score!=='—'?'('+score+')':''}</span></div>
+        <div class="rc-desc">${desc.length>240?desc.slice(0,240)+'…':desc}</div>
+        <div class="rc-meta"><span>Published: ${new Date(cve.published).toLocaleDateString()}</span><span>Status: ${cve.vulnStatus}</span></div>
+      </div>`;
+    }).join('');
+    el.innerHTML=`<div class="repos-grid">${cards}</div>`;
+  }catch(e){el.innerHTML=`<div class="result-error">Error: ${e.message}</div>`;}
+}
+
+// ===== WAYBACK SNAPSHOT =====
+async function lookupWayback(){
+  if(!requireAuth())return;
+  let url=document.getElementById('waybackInput').value.trim();
+  if(!url)return showToast('Enter a URL');
+  url=url.replace(/^https?:\/\//,'');
+  const el=document.getElementById('waybackResult');
+  el.innerHTML='<div class="result-loading">Checking Internet Archive...</div>';
+  addHistory('Wayback',url);
+  try{
+    const r=await fetch(`https://archive.org/wayback/available?url=${encodeURIComponent(url)}`,{signal:AbortSignal.timeout(8000)});
+    if(!r.ok)throw new Error('Archive lookup failed');
+    const d=await r.json();
+    const snap=d.archived_snapshots&&d.archived_snapshots.closest;
+    if(!snap||!snap.available){
+      el.innerHTML='<div class="result-empty">No archived snapshot found for this URL.</div>';
+      return;
+    }
+    const ts=snap.timestamp;
+    const formatted=`${ts.slice(0,4)}-${ts.slice(4,6)}-${ts.slice(6,8)} ${ts.slice(8,10)}:${ts.slice(10,12)}:${ts.slice(12,14)} UTC`;
+    el.innerHTML=`
+      <div class="result-grid">
+        <div class="result-row"><span class="rr-key">Original URL</span><span class="rr-val">${url}</span></div>
+        <div class="result-row"><span class="rr-key">Snapshot Date</span><span class="rr-val">${formatted}</span></div>
+        <div class="result-row"><span class="rr-key">HTTP Status (then)</span><span class="rr-val">${snap.status}</span></div>
+        <div class="result-row"><span class="rr-key">Archived Copy</span><span class="rr-val"><a href="${snap.url}" target="_blank">Open snapshot ↗</a></span></div>
+      </div>
+      <div style="margin-top:.75rem;font-size:12px;color:var(--text3)">Note: This shows only the closest single snapshot. Visit web.archive.org directly to browse the full history.</div>`;
+  }catch(e){el.innerHTML=`<div class="result-error">Error: ${e.message}</div>`;}
+}
+
+// ===== PORT CHECK (lightweight reachability, common web ports only) =====
+async function lookupPortCheck(){
+  if(!requireAuth())return;
+  let host=document.getElementById('portInput').value.trim().replace(/^https?:\/\//,'').split('/')[0];
+  if(!host)return showToast('Enter a hostname');
+  const el=document.getElementById('portResult');
+  el.innerHTML='<div class="result-loading">Checking common web ports...</div>';
+  addHistory('Port Check',host);
+  const checks=[
+    {label:'HTTP (80)', url:`http://${host}`},
+    {label:'HTTPS (443)', url:`https://${host}`}
+  ];
+  try{
+    const results=await Promise.all(checks.map(async c=>{
+      try{
+        await fetch(c.url,{mode:'no-cors',signal:AbortSignal.timeout(5000)});
+        return {...c, open:true};
+      }catch{ return {...c, open:false}; }
+    }));
+    const rows=results.map(r=>`<div class="result-row"><span class="rr-key">${r.label}</span><span class="rr-val">${r.open?'<span class="badge-green">Reachable</span>':'<span class="badge-red">Unreachable</span>'}</span></div>`);
+    el.innerHTML=`<div class="result-grid">${rows.join('')}</div>
+      <div style="margin-top:.75rem;font-size:12px;color:var(--text3)">This is a browser-based reachability check on standard web ports only — not a full network port scanner. For comprehensive port scanning, use authorized tools like nmap directly against hosts you own or are permitted to test.</div>`;
+  }catch(e){el.innerHTML=`<div class="result-error">Error: ${e.message}</div>`;}
+}
+
 // Live counter animation
-let liveCount=50n;
+let liveCount=97n;
 </script>
 </body>
 </html>

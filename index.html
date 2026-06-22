@@ -352,6 +352,29 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background-
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
           Domain Origin
         </div>
+        <div class="sidebar-item" data-page="page-dns">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="6" rx="1"/><rect x="2" y="15" width="20" height="6" rx="1"/><line x1="6" y1="6" x2="6" y2="6"/><line x1="6" y1="18" x2="6" y2="18"/></svg>
+          DNS Records
+        </div>
+        <div class="sidebar-item" data-page="page-security">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg>
+          Site Security
+        </div>
+        <div class="sidebar-item" data-page="page-npm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9h18v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 9V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3"/><line x1="9" y1="13" x2="15" y2="13"/></svg>
+          npm Package
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Extras</div>
+        <div class="sidebar-item" data-page="page-crypto">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.5 8.5h3.5a2 2 0 1 1 0 4H9.5m0 0h3.5a2 2 0 1 1 0 4H9.5m0-8v8M12 6v1.5M12 16.5V18"/></svg>
+          Crypto Prices
+        </div>
+        <div class="sidebar-item" data-page="page-weather">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19a4.5 4.5 0 0 0 0-9 6 6 0 0 0-11.4 1.5A4 4 0 0 0 6 19h11.5z"/></svg>
+          Weather
+        </div>
       </div>
     </aside>
 
@@ -499,6 +522,86 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background-
         <div style="font-size:12px;color:var(--text3)">Uses rdap.org + ip-api.com public APIs</div>
       </div>
 
+      <!-- DNS Records -->
+      <div class="page" id="page-dns">
+        <div class="tool-header">
+          <h2>DNS Records</h2>
+          <p>Look up A, AAAA, MX, TXT, NS and CNAME records for any domain.</p>
+        </div>
+        <div class="tool-box">
+          <div class="tool-row">
+            <input class="tool-input" id="dnsInput" placeholder="Domain (e.g. example.com)" type="text"/>
+            <button class="tool-btn" id="dnsBtn">Lookup</button>
+          </div>
+          <div class="result-area" id="dnsResult"><div class="result-empty">Enter a domain name above and click Lookup.</div></div>
+        </div>
+        <div style="font-size:12px;color:var(--text3)">Uses Google Public DNS-over-HTTPS API · Public data only</div>
+      </div>
+
+      <!-- Site Security -->
+      <div class="page" id="page-security">
+        <div class="tool-header">
+          <h2>Site Security Headers</h2>
+          <p>Check a website's security headers (HSTS, CSP, X-Frame-Options) and basic SSL status.</p>
+        </div>
+        <div class="tool-box">
+          <div class="tool-row">
+            <input class="tool-input" id="securityInput" placeholder="Domain or URL (e.g. github.com)" type="text"/>
+            <button class="tool-btn" id="securityBtn">Scan</button>
+          </div>
+          <div class="result-area" id="securityResult"><div class="result-empty">Enter a domain above and click Scan.</div></div>
+        </div>
+        <div style="font-size:12px;color:var(--text3)">Checks response headers directly · Public data only</div>
+      </div>
+
+      <!-- npm Package -->
+      <div class="page" id="page-npm">
+        <div class="tool-header">
+          <h2>npm Package Lookup</h2>
+          <p>Check details, version history and maintainers for any npm package.</p>
+        </div>
+        <div class="tool-box">
+          <div class="tool-row">
+            <input class="tool-input" id="npmInput" placeholder="Package name (e.g. react)" type="text"/>
+            <button class="tool-btn" id="npmBtn">Lookup</button>
+          </div>
+          <div class="result-area" id="npmResult"><div class="result-empty">Enter a package name above and click Lookup.</div></div>
+        </div>
+        <div style="font-size:12px;color:var(--text3)">Uses npm Registry public API · No auth required</div>
+      </div>
+
+      <!-- Crypto Prices -->
+      <div class="page" id="page-crypto">
+        <div class="tool-header">
+          <h2>Crypto Prices</h2>
+          <p>Live prices and 24h change for top cryptocurrencies.</p>
+        </div>
+        <div class="tool-box">
+          <div class="tool-row">
+            <input class="tool-input" id="cryptoInput" placeholder="Coin name (e.g. bitcoin, ethereum, solana)" type="text"/>
+            <button class="tool-btn" id="cryptoBtn">Check Price</button>
+          </div>
+          <div class="result-area" id="cryptoResult"><div class="result-empty">Enter a coin name above and click Check Price.</div></div>
+        </div>
+        <div style="font-size:12px;color:var(--text3)">Uses CoinGecko Keyless Public API</div>
+      </div>
+
+      <!-- Weather -->
+      <div class="page" id="page-weather">
+        <div class="tool-header">
+          <h2>Weather Lookup</h2>
+          <p>Current weather and conditions for any city in the world.</p>
+        </div>
+        <div class="tool-box">
+          <div class="tool-row">
+            <input class="tool-input" id="weatherInput" placeholder="City name (e.g. Istanbul)" type="text"/>
+            <button class="tool-btn" id="weatherBtn">Check Weather</button>
+          </div>
+          <div class="result-area" id="weatherResult"><div class="result-empty">Enter a city name above and click Check Weather.</div></div>
+        </div>
+        <div style="font-size:12px;color:var(--text3)">Uses Open-Meteo public API · No auth required</div>
+      </div>
+
     </main>
   </div>
 </div>
@@ -611,6 +714,11 @@ document.addEventListener('DOMContentLoaded', function(){
   document.getElementById('usernameBtn').addEventListener('click', lookupUsername);
   document.getElementById('emailBtn').addEventListener('click', lookupEmail);
   document.getElementById('domainBtn').addEventListener('click', lookupDomain);
+  document.getElementById('dnsBtn').addEventListener('click', lookupDNS);
+  document.getElementById('securityBtn').addEventListener('click', lookupSecurity);
+  document.getElementById('npmBtn').addEventListener('click', lookupNpm);
+  document.getElementById('cryptoBtn').addEventListener('click', lookupCrypto);
+  document.getElementById('weatherBtn').addEventListener('click', lookupWeather);
 
   // Enter ile tetikleme (tool inputları)
   const enterMap = {
@@ -619,7 +727,12 @@ document.addEventListener('DOMContentLoaded', function(){
     ipInput: lookupIP,
     usernameInput: lookupUsername,
     emailInput: lookupEmail,
-    domainInput: lookupDomain
+    domainInput: lookupDomain,
+    dnsInput: lookupDNS,
+    securityInput: lookupSecurity,
+    npmInput: lookupNpm,
+    cryptoInput: lookupCrypto,
+    weatherInput: lookupWeather
   };
   Object.keys(enterMap).forEach(function(id){
     const el=document.getElementById(id);
@@ -919,6 +1032,165 @@ async function lookupDomain(){
       if(rdapData.status)rows.push(`<div class="result-row"><span class="rr-key">Status</span><span class="rr-val">${rdapData.status.map(s=>`<span class="badge-blue">${s}</span>`).join(' ')}</span></div>`);
     }
     el.innerHTML=`<div class="result-grid">${rows.join('')}</div>`;
+  }catch(e){el.innerHTML=`<div class="result-error">Error: ${e.message}</div>`;}
+}
+
+// ===== DNS RECORDS LOOKUP =====
+async function lookupDNS(){
+  if(!requireAuth())return;
+  const domain=document.getElementById('dnsInput').value.trim().replace(/^https?:\/\//,'').split('/')[0];
+  if(!domain)return showToast('Enter a domain name');
+  const el=document.getElementById('dnsResult');
+  el.innerHTML='<div class="result-loading">Querying DNS records...</div>';
+  addHistory('DNS',domain);
+  try{
+    const types=['A','AAAA','MX','TXT','NS','CNAME'];
+    const results=await Promise.all(types.map(async t=>{
+      try{
+        const r=await fetch(`https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=${t}`,{signal:AbortSignal.timeout(5000)});
+        const d=await r.json();
+        return {type:t, answers:d.Answer||[], status:d.Status};
+      }catch{ return {type:t, answers:[], status:-1}; }
+    }));
+    const rows=[];
+    let any=false;
+    results.forEach(r=>{
+      if(r.answers && r.answers.length){
+        any=true;
+        r.answers.forEach(a=>{
+          rows.push(`<div class="result-row"><span class="rr-key">${r.type}</span><span class="rr-val" style="font-family:monospace;font-size:12px">${a.data}</span></div>`);
+        });
+      }
+    });
+    if(!any){
+      el.innerHTML='<div class="result-empty">No DNS records found for this domain.</div>';
+      return;
+    }
+    el.innerHTML=`<div class="result-grid">${rows.join('')}</div>`;
+  }catch(e){el.innerHTML=`<div class="result-error">Error: ${e.message}</div>`;}
+}
+
+// ===== SITE SECURITY HEADERS =====
+async function lookupSecurity(){
+  if(!requireAuth())return;
+  let target=document.getElementById('securityInput').value.trim();
+  if(!target)return showToast('Enter a domain or URL');
+  if(!/^https?:\/\//i.test(target)) target='https://'+target;
+  const el=document.getElementById('securityResult');
+  el.innerHTML='<div class="result-loading">Checking security headers...</div>';
+  addHistory('Security',target);
+  try{
+    const r=await fetch(target,{method:'GET',mode:'cors',signal:AbortSignal.timeout(6000)});
+    const checks=[
+      {key:'strict-transport-security',label:'HSTS (Strict-Transport-Security)'},
+      {key:'content-security-policy',label:'Content-Security-Policy'},
+      {key:'x-frame-options',label:'X-Frame-Options'},
+      {key:'x-content-type-options',label:'X-Content-Type-Options'},
+      {key:'referrer-policy',label:'Referrer-Policy'},
+      {key:'permissions-policy',label:'Permissions-Policy'}
+    ];
+    const rows=checks.map(c=>{
+      const val=r.headers.get(c.key);
+      return `<div class="result-row"><span class="rr-key">${c.label}</span><span class="rr-val">${val?`<span class="badge-green">Present</span> <span style="font-size:11px;color:var(--text2)">${val.slice(0,60)}</span>`:'<span class="badge-red">Missing</span>'}</span></div>`;
+    });
+    rows.unshift(`<div class="result-row"><span class="rr-key">URL</span><span class="rr-val">${target}</span></div>`);
+    rows.unshift(`<div class="result-row"><span class="rr-key">HTTPS</span><span class="rr-val">${target.startsWith('https')?'<span class="badge-green">Yes</span>':'<span class="badge-red">No</span>'}</span></div>`);
+    rows.push(`<div class="result-row"><span class="rr-key">HTTP Status</span><span class="rr-val">${r.status}</span></div>`);
+    el.innerHTML=`<div class="result-grid">${rows.join('')}</div><div style="margin-top:.75rem;font-size:12px;color:var(--text3)">Note: Browser CORS restrictions may hide some headers from sites that don't explicitly expose them.</div>`;
+  }catch(e){
+    el.innerHTML=`<div class="result-error">Error: ${e.message}. Some sites block cross-origin header inspection (CORS), which is itself a security signal.</div>`;
+  }
+}
+
+// ===== NPM PACKAGE LOOKUP =====
+async function lookupNpm(){
+  if(!requireAuth())return;
+  const pkg=document.getElementById('npmInput').value.trim();
+  if(!pkg)return showToast('Enter a package name');
+  const el=document.getElementById('npmResult');
+  el.innerHTML='<div class="result-loading">Fetching package info...</div>';
+  addHistory('npm',pkg);
+  try{
+    const r=await fetch(`https://registry.npmjs.org/${encodeURIComponent(pkg)}`);
+    if(!r.ok)throw new Error('Package not found');
+    const d=await r.json();
+    const latest=d['dist-tags']?d['dist-tags'].latest:'—';
+    const latestInfo=d.versions&&d.versions[latest]?d.versions[latest]:{};
+    const maintainers=(d.maintainers||[]).map(m=>m.name).join(', ')||'—';
+    el.innerHTML=`
+      <div class="result-grid">
+        <div class="result-row"><span class="rr-key">Package</span><span class="rr-val"><a href="https://www.npmjs.com/package/${encodeURIComponent(pkg)}" target="_blank">${d.name} ↗</a></span></div>
+        <div class="result-row"><span class="rr-key">Latest Version</span><span class="rr-val"><span class="badge-blue">${latest}</span></span></div>
+        <div class="result-row"><span class="rr-key">Description</span><span class="rr-val">${d.description||'—'}</span></div>
+        <div class="result-row"><span class="rr-key">License</span><span class="rr-val">${d.license||'—'}</span></div>
+        <div class="result-row"><span class="rr-key">Maintainers</span><span class="rr-val">${maintainers}</span></div>
+        <div class="result-row"><span class="rr-key">Homepage</span><span class="rr-val">${d.homepage?`<a href="${d.homepage}" target="_blank">${d.homepage} ↗</a>`:'—'}</span></div>
+        <div class="result-row"><span class="rr-key">Repository</span><span class="rr-val">${d.repository&&d.repository.url?`<a href="${d.repository.url.replace(/^git\+/,'').replace(/\.git$/,'')}" target="_blank">View repo ↗</a>`:'—'}</span></div>
+        <div class="result-row"><span class="rr-key">First Published</span><span class="rr-val">${d.time&&d.time.created?new Date(d.time.created).toUTCString():'—'}</span></div>
+        <div class="result-row"><span class="rr-key">Last Published</span><span class="rr-val">${d.time&&d.time.modified?new Date(d.time.modified).toUTCString():'—'}</span></div>
+        <div class="result-row"><span class="rr-key">Total Versions</span><span class="rr-val">${d.versions?Object.keys(d.versions).length:'—'}</span></div>
+        <div class="result-row"><span class="rr-key">Main Dependencies</span><span class="rr-val">${latestInfo.dependencies?Object.keys(latestInfo.dependencies).length:0}</span></div>
+      </div>`;
+  }catch(e){el.innerHTML=`<div class="result-error">Error: ${e.message}</div>`;}
+}
+
+// ===== CRYPTO PRICE LOOKUP =====
+async function lookupCrypto(){
+  if(!requireAuth())return;
+  const coin=document.getElementById('cryptoInput').value.trim().toLowerCase();
+  if(!coin)return showToast('Enter a coin name (e.g. bitcoin)');
+  const el=document.getElementById('cryptoResult');
+  el.innerHTML='<div class="result-loading">Fetching live price...</div>';
+  addHistory('Crypto',coin);
+  try{
+    const r=await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${encodeURIComponent(coin)}&vs_currencies=usd,eur,try&include_24hr_change=true&include_market_cap=true&include_24hr_vol=true`);
+    const d=await r.json();
+    if(!d[coin])throw new Error('Coin not found. Try the full name, e.g. "bitcoin" not "BTC".');
+    const c=d[coin];
+    const change=c.usd_24h_change;
+    const changeBadge=change>=0?`<span class="badge-green">+${change.toFixed(2)}%</span>`:`<span class="badge-red">${change.toFixed(2)}%</span>`;
+    el.innerHTML=`
+      <div class="result-grid">
+        <div class="result-row"><span class="rr-key">Coin</span><span class="rr-val" style="text-transform:capitalize">${coin}</span></div>
+        <div class="result-row"><span class="rr-key">Price (USD)</span><span class="rr-val">$${c.usd?.toLocaleString()||'—'}</span></div>
+        <div class="result-row"><span class="rr-key">Price (EUR)</span><span class="rr-val">€${c.eur?.toLocaleString()||'—'}</span></div>
+        <div class="result-row"><span class="rr-key">Price (TRY)</span><span class="rr-val">₺${c.try?.toLocaleString()||'—'}</span></div>
+        <div class="result-row"><span class="rr-key">24h Change</span><span class="rr-val">${changeBadge}</span></div>
+        <div class="result-row"><span class="rr-key">Market Cap (USD)</span><span class="rr-val">$${c.usd_market_cap?Math.round(c.usd_market_cap).toLocaleString():'—'}</span></div>
+        <div class="result-row"><span class="rr-key">24h Volume (USD)</span><span class="rr-val">$${c.usd_24h_vol?Math.round(c.usd_24h_vol).toLocaleString():'—'}</span></div>
+      </div>`;
+  }catch(e){el.innerHTML=`<div class="result-error">Error: ${e.message}</div>`;}
+}
+
+// ===== WEATHER LOOKUP =====
+async function lookupWeather(){
+  if(!requireAuth())return;
+  const city=document.getElementById('weatherInput').value.trim();
+  if(!city)return showToast('Enter a city name');
+  const el=document.getElementById('weatherResult');
+  el.innerHTML='<div class="result-loading">Finding location and fetching weather...</div>';
+  addHistory('Weather',city);
+  try{
+    const geoRes=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`);
+    const geo=await geoRes.json();
+    if(!geo.results||!geo.results.length)throw new Error('City not found');
+    const loc=geo.results[0];
+    const wRes=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${loc.latitude}&longitude=${loc.longitude}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code,is_day&timezone=auto`);
+    const w=await wRes.json();
+    const cur=w.current;
+    const codes={0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Fog',48:'Fog',51:'Light drizzle',53:'Drizzle',55:'Dense drizzle',61:'Light rain',63:'Rain',65:'Heavy rain',71:'Light snow',73:'Snow',75:'Heavy snow',80:'Rain showers',81:'Rain showers',82:'Violent rain showers',95:'Thunderstorm',96:'Thunderstorm with hail'};
+    const desc=codes[cur.weather_code]||'Unknown';
+    el.innerHTML=`
+      <div class="result-grid">
+        <div class="result-row"><span class="rr-key">Location</span><span class="rr-val">${loc.name}, ${loc.country}</span></div>
+        <div class="result-row"><span class="rr-key">Coordinates</span><span class="rr-val">${loc.latitude}, ${loc.longitude}</span></div>
+        <div class="result-row"><span class="rr-key">Condition</span><span class="rr-val"><span class="badge-blue">${desc}</span></span></div>
+        <div class="result-row"><span class="rr-key">Temperature</span><span class="rr-val">${cur.temperature_2m}°C</span></div>
+        <div class="result-row"><span class="rr-key">Humidity</span><span class="rr-val">${cur.relative_humidity_2m}%</span></div>
+        <div class="result-row"><span class="rr-key">Wind Speed</span><span class="rr-val">${cur.wind_speed_10m} km/h</span></div>
+        <div class="result-row"><span class="rr-key">Day / Night</span><span class="rr-val">${cur.is_day?'<span class="badge-green">Day</span>':'<span class="badge-blue">Night</span>'}</span></div>
+        <div class="result-row"><span class="rr-key">Timezone</span><span class="rr-val">${w.timezone}</span></div>
+      </div>`;
   }catch(e){el.innerHTML=`<div class="result-error">Error: ${e.message}</div>`;}
 }
 

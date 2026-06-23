@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KekeByte — OSINT Intelligence Platform</title>
+<script src="https://unpkg.com/libphonenumber-js@1.13.6/bundle/libphonenumber-max.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -325,6 +326,10 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background-
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>
           Username
         </div>
+        <div class="sidebar-item" data-page="page-social">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          Social Identity
+        </div>
         <div class="sidebar-item" data-page="page-discord">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           Discord
@@ -340,6 +345,14 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background-
         <div class="sidebar-item" data-page="page-email">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           Email
+        </div>
+        <div class="sidebar-item" data-page="page-phone">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Phone Lookup
+        </div>
+        <div class="sidebar-item" data-page="page-pwnedpass">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Pwned Passwords
         </div>
       </div>
       <div class="sidebar-section">
@@ -569,6 +582,26 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background-
         <div style="font-size:12px;color:var(--text3)">Checks GitHub, npm, PyPI public APIs</div>
       </div>
 
+      <!-- Social Identity -->
+      <div class="page" id="page-social">
+        <div class="tool-header"><h2>Social Identity Lookup</h2><p>Find cryptographically-verified social media identities linked to a username via Keybase.</p></div>
+        <div class="tool-box">
+          <div class="tool-row">
+            <select class="tool-input" id="socialPlatform" style="flex:0 0 160px">
+              <option value="username">Keybase username</option>
+              <option value="twitter">Twitter / X</option>
+              <option value="github">GitHub</option>
+              <option value="reddit">Reddit</option>
+              <option value="hackernews">Hacker News</option>
+            </select>
+            <input class="tool-input" id="socialInput" placeholder="Username to search" type="text"/>
+            <button class="tool-btn" id="socialBtn">Search</button>
+          </div>
+          <div class="result-area" id="socialResult"><div class="result-empty">Pick a platform, enter a username, and click Search.</div></div>
+        </div>
+        <div style="font-size:12px;color:var(--text3)">Uses the public Keybase identity API · Only returns results for users who have <a href="https://keybase.io" target="_blank" style="color:var(--blue)">cryptographically proven</a> ownership of that account on Keybase — most usernames won't have a Keybase-verified link, which is expected and not an error.</div>
+      </div>
+
       <!-- Email -->
       <div class="page" id="page-email">
         <div class="tool-header"><h2>Email Lookup</h2><p>Validate and check email address information using public APIs.</p></div>
@@ -580,6 +613,36 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background-
           <div class="result-area" id="emailResult"><div class="result-empty">Enter an email address above and click Lookup.</div></div>
         </div>
         <div style="font-size:12px;color:var(--text3)">Uses Gravatar + mailcheck.ai public APIs</div>
+      </div>
+
+      <!-- Phone -->
+      <div class="page" id="page-phone">
+        <div class="tool-header"><h2>Phone Number Lookup</h2><p>Validate format, detect country, and identify line type for any phone number worldwide.</p></div>
+        <div class="tool-box">
+          <div class="tool-row">
+            <select class="tool-input" id="phoneCountry" style="flex:0 0 140px">
+              <option value="">Auto-detect</option>
+            </select>
+            <input class="tool-input" id="phoneInput" placeholder="Phone number (e.g. +1 213 373 4253)" type="text"/>
+            <button class="tool-btn" id="phoneBtn">Lookup</button>
+          </div>
+          <div class="result-area" id="phoneResult"><div class="result-empty">Enter a phone number above and click Lookup. Include the country code (e.g. +90, +1, +44) for best results.</div></div>
+        </div>
+        <div style="font-size:12px;color:var(--text3)">Validated locally using Google's libphonenumber metadata · No data sent to any server · Carrier/operator name isn't available from free public sources — this checks format, country, region, and line type (mobile / fixed line / VoIP / toll-free / etc.)</div>
+      </div>
+
+      <!-- Pwned Passwords -->
+      <div class="page" id="page-pwnedpass">
+        <div class="tool-header"><h2>Pwned Passwords</h2><p>Check if a password has previously appeared in known data breaches — without ever sending the password itself anywhere.</p></div>
+        <div class="tool-box">
+          <div class="tool-row">
+            <input class="tool-input" id="pwnedPassInput" placeholder="Type a password to check" type="password" autocomplete="off"/>
+            <button class="tool-btn" id="pwnedPassToggle" type="button" style="background:var(--bg3);color:var(--text2);border:1px solid var(--border2)">Show</button>
+            <button class="tool-btn" id="pwnedPassBtn">Check</button>
+          </div>
+          <div class="result-area" id="pwnedPassResult"><div class="result-empty">Type a password above and click Check.</div></div>
+        </div>
+        <div style="font-size:12px;color:var(--text3)">Powered by the <a href="https://haveibeenpwned.com/Passwords" target="_blank" style="color:var(--blue)">Have I Been Pwned</a> Pwned Passwords API · Uses k-anonymity: your password is hashed (SHA-1) in your browser and only the first 5 characters of the hash are ever sent — the full password and full hash never leave your device.</div>
       </div>
 
       <!-- Domain -->
@@ -921,6 +984,49 @@ async function lookupUsername(){
   el.innerHTML=`<div class="result-grid">${results.map(r=>`<div class="result-row"><span class="rr-key">${r.name}</span><span class="rr-val">${r.found?`<span class="badge-green">Found</span> <a href="${r.url}" target="_blank">${r.url} ↗</a>`:'<span class="badge-red">Not Found</span>'}</span></div>`).join('')}</div>`;
 }
 
+// ===== SOCIAL IDENTITY (Keybase) =====
+async function lookupSocial(){
+  if(!requireAuth())return;
+  const platform=document.getElementById('socialPlatform').value;
+  const user=document.getElementById('socialInput').value.trim();
+  if(!user)return showToast('Enter a username');
+  const el=document.getElementById('socialResult');
+  el.innerHTML='<div class="result-loading">Querying Keybase identity graph...</div>';
+  addHistory('Social Identity',platform+':'+user);
+  try{
+    const param=platform==='username'?'usernames':platform;
+    const url=`https://keybase.io/_/api/1.0/user/lookup.json?${param}=${encodeURIComponent(user)}&fields=basics,pictures,profile,proofs_summary`;
+    const r=await fetch(url,{signal:AbortSignal.timeout(8000)});
+    if(!r.ok)throw new Error('Keybase API returned '+r.status);
+    const d=await r.json();
+    const them=(d.them||[]).filter(Boolean);
+    if(!them.length){
+      el.innerHTML=`<div class="result-empty">No Keybase-verified identity found for this ${platform==='username'?'Keybase username':platform+' account'}. This just means that account hasn't linked Keybase — it doesn't mean anything suspicious.</div>`;
+      return;
+    }
+    el.innerHTML=them.map(person=>{
+      const basics=person.basics||{};
+      const profile=person.profile||{};
+      const pic=person.pictures&&person.pictures.primary?person.pictures.primary.url:null;
+      const proofs=(person.proofs_summary&&person.proofs_summary.all)||[];
+      const proofRows=proofs.map(p=>`<span class="badge-blue" style="margin:0 .3rem .3rem 0;display:inline-block"><a href="${p.service_url||'#'}" target="_blank" style="color:inherit;text-decoration:none">${p.proof_type||p.service_type||'link'}: ${p.nametag||''}</a></span>`).join('');
+      return `<div class="result-profile">
+        ${pic?`<img src="${pic}" class="avatar-big" onerror="this.style.display='none'"/>`:''}
+        <div class="rp-info">
+          <div class="rp-name">${profile.full_name||basics.username||'—'}</div>
+          <div class="rp-meta">@${basics.username||'—'} on Keybase${profile.bio?' · '+profile.bio:''}</div>
+        </div>
+      </div>
+      <div class="result-grid">
+        <div class="result-row"><span class="rr-key">Keybase Username</span><span class="rr-val"><a href="https://keybase.io/${basics.username}" target="_blank">${basics.username} ↗</a></span></div>
+        <div class="result-row"><span class="rr-key">Account Created</span><span class="rr-val">${basics.ctime?new Date(basics.ctime*1000).toUTCString():'—'}</span></div>
+        <div class="result-row"><span class="rr-key">Location</span><span class="rr-val">${profile.location||'—'}</span></div>
+        <div class="result-row"><span class="rr-key">Verified Linked Accounts</span><span class="rr-val">${proofRows||'None public'}</span></div>
+      </div>`;
+    }).join('<div style="height:1rem"></div>');
+  }catch(e){el.innerHTML=`<div class="result-error">Error: ${e.message}</div>`;}
+}
+
 // ===== EMAIL =====
 async function lookupEmail(){
   if(!requireAuth())return;
@@ -945,6 +1051,88 @@ async function lookupEmail(){
   }catch(e){el.innerHTML=`<div class="result-error">Error: ${e.message}</div>`;}
 }
 async function digestMessage(msg){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(msg));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('').slice(0,32);}
+
+// ===== PHONE =====
+const COUNTRY_NAMES={AF:"Afghanistan",AL:"Albania",DZ:"Algeria",AR:"Argentina",AM:"Armenia",AU:"Australia",AT:"Austria",AZ:"Azerbaijan",BH:"Bahrain",BD:"Bangladesh",BY:"Belarus",BE:"Belgium",BR:"Brazil",BG:"Bulgaria",KH:"Cambodia",CA:"Canada",CL:"Chile",CN:"China",CO:"Colombia",HR:"Croatia",CY:"Cyprus",CZ:"Czech Republic",DK:"Denmark",EG:"Egypt",EE:"Estonia",FI:"Finland",FR:"France",GE:"Georgia",DE:"Germany",GH:"Ghana",GR:"Greece",HK:"Hong Kong",HU:"Hungary",IS:"Iceland",IN:"India",ID:"Indonesia",IR:"Iran",IQ:"Iraq",IE:"Ireland",IL:"Israel",IT:"Italy",JP:"Japan",JO:"Jordan",KZ:"Kazakhstan",KE:"Kenya",KW:"Kuwait",LV:"Latvia",LB:"Lebanon",LT:"Lithuania",LU:"Luxembourg",MY:"Malaysia",MX:"Mexico",MA:"Morocco",NL:"Netherlands",NZ:"New Zealand",NG:"Nigeria",NO:"Norway",PK:"Pakistan",PH:"Philippines",PL:"Poland",PT:"Portugal",QA:"Qatar",RO:"Romania",RU:"Russia",SA:"Saudi Arabia",RS:"Serbia",SG:"Singapore",SK:"Slovakia",SI:"Slovenia",ZA:"South Africa",KR:"South Korea",ES:"Spain",SE:"Sweden",CH:"Switzerland",TW:"Taiwan",TH:"Thailand",TR:"Turkey",UA:"Ukraine",AE:"United Arab Emirates",GB:"United Kingdom",US:"United States",VN:"Vietnam"};
+function populatePhoneCountrySelect(){
+  const sel=document.getElementById('phoneCountry');
+  if(!sel||sel.dataset.filled)return;
+  Object.keys(COUNTRY_NAMES).sort((a,b)=>COUNTRY_NAMES[a].localeCompare(COUNTRY_NAMES[b])).forEach(code=>{
+    const opt=document.createElement('option');opt.value=code;opt.textContent=COUNTRY_NAMES[code]+' ('+code+')';sel.appendChild(opt);
+  });
+  sel.dataset.filled='1';
+}
+const PHONE_TYPE_LABELS={MOBILE:'Mobile',FIXED_LINE:'Fixed line',FIXED_LINE_OR_MOBILE:'Fixed line or mobile',TOLL_FREE:'Toll-free',PREMIUM_RATE:'Premium rate',SHARED_COST:'Shared cost',VOIP:'VoIP',PERSONAL_NUMBER:'Personal number',PAGER:'Pager',UAN:'UAN',VOICEMAIL:'Voicemail',UNKNOWN:'Unknown'};
+function lookupPhone(){
+  if(!requireAuth())return;
+  const raw=document.getElementById('phoneInput').value.trim();
+  const countryHint=document.getElementById('phoneCountry').value||undefined;
+  const el=document.getElementById('phoneResult');
+  if(!raw)return showToast('Enter a phone number');
+  if(typeof libphonenumber==='undefined'){el.innerHTML='<div class="result-error">Phone validation library failed to load. Check your internet connection and reload.</div>';return;}
+  addHistory('Phone',raw);
+  try{
+    const pn=libphonenumber.parsePhoneNumberFromString(raw,countryHint);
+    if(!pn){el.innerHTML='<div class="result-grid"><div class="result-row"><span class="rr-key">Input</span><span class="rr-val">'+raw+'</span></div><div class="result-row"><span class="rr-key">Status</span><span class="rr-val"><span class="badge-red">Could not parse number</span></span></div></div>';return;}
+    const isValid=pn.isValid();
+    const isPossible=pn.isPossible();
+    const type=pn.getType();
+    const typeLabel=type?(PHONE_TYPE_LABELS[type]||type):'Unknown';
+    const countryName=pn.country?(COUNTRY_NAMES[pn.country]||pn.country):'Unknown';
+    el.innerHTML=`<div class="result-grid">
+      <div class="result-row"><span class="rr-key">Valid Number</span><span class="rr-val">${isValid?'<span class="badge-green">Yes</span>':'<span class="badge-red">No</span>'}</span></div>
+      <div class="result-row"><span class="rr-key">Possible Number</span><span class="rr-val">${isPossible?'<span class="badge-green">Yes</span>':'<span class="badge-red">No</span>'}</span></div>
+      <div class="result-row"><span class="rr-key">Country</span><span class="rr-val">${countryName}${pn.country?' ('+pn.country+')':''}</span></div>
+      <div class="result-row"><span class="rr-key">Country Calling Code</span><span class="rr-val">+${pn.countryCallingCode}</span></div>
+      <div class="result-row"><span class="rr-key">Line Type</span><span class="rr-val"><span class="badge-blue">${typeLabel}</span></span></div>
+      <div class="result-row"><span class="rr-key">National Format</span><span class="rr-val">${pn.formatNational()}</span></div>
+      <div class="result-row"><span class="rr-key">International Format</span><span class="rr-val">${pn.formatInternational()}</span></div>
+      <div class="result-row"><span class="rr-key">E.164 Format</span><span class="rr-val" style="font-family:monospace">${pn.format('E.164')}</span></div>
+      <div class="result-row"><span class="rr-key">National Number</span><span class="rr-val" style="font-family:monospace">${pn.nationalNumber}</span></div>
+      <div class="result-row"><span class="rr-key">Carrier / Operator</span><span class="rr-val" style="color:var(--text3)">Not available from free public data</span></div>
+    </div>`;
+  }catch(e){el.innerHTML=`<div class="result-error">Error: ${e.message}</div>`;}
+}
+
+// ===== PWNED PASSWORDS =====
+async function sha1Hex(str){
+  const buf=await crypto.subtle.digest('SHA-1',new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
+}
+async function checkPwnedPassword(){
+  if(!requireAuth())return;
+  const pw=document.getElementById('pwnedPassInput').value;
+  const el=document.getElementById('pwnedPassResult');
+  if(!pw){showToast('Type a password first');return;}
+  el.innerHTML='<div class="result-loading">Hashing locally and checking k-anonymity range...</div>';
+  addHistory('Pwned Password','(hidden)');
+  try{
+    const hash=await sha1Hex(pw);
+    const prefix=hash.slice(0,5);
+    const suffix=hash.slice(5);
+    const r=await fetch(`https://api.pwnedpasswords.com/range/${prefix}`,{headers:{'Add-Padding':'true'},signal:AbortSignal.timeout(8000)});
+    if(!r.ok)throw new Error('Pwned Passwords API returned '+r.status);
+    const text=await r.text();
+    const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);
+    let count=0;
+    for(const line of lines){
+      const [lineSuffix,lineCount]=line.split(':');
+      if(lineSuffix===suffix){count=parseInt(lineCount,10)||0;break;}
+    }
+    if(count>0){
+      el.innerHTML=`<div class="result-grid">
+        <div class="result-row"><span class="rr-key">Status</span><span class="rr-val"><span class="badge-red">Found in breaches</span></span></div>
+        <div class="result-row"><span class="rr-key">Times Seen</span><span class="rr-val">${count.toLocaleString()}</span></div>
+        <div class="result-row"><span class="rr-key">Recommendation</span><span class="rr-val">This password is known to attackers — change it everywhere it's used.</span></div>
+      </div>`;
+    }else{
+      el.innerHTML=`<div class="result-grid">
+        <div class="result-row"><span class="rr-key">Status</span><span class="rr-val"><span class="badge-green">Not found in known breaches</span></span></div>
+        <div class="result-row"><span class="rr-key">Note</span><span class="rr-val" style="color:var(--text3)">Not appearing in this dataset doesn't guarantee the password is strong — still use a unique, long passphrase.</span></div>
+      </div>`;
+    }
+  }catch(e){el.innerHTML=`<div class="result-error">Error: ${e.message}</div>`;}
+}
 
 // ===== DOMAIN =====
 async function lookupDomain(){
@@ -1164,7 +1352,18 @@ document.addEventListener('DOMContentLoaded', function(){
   document.getElementById('githubBtn').addEventListener('click',lookupGithub);
   document.getElementById('ipBtn').addEventListener('click',lookupIP);
   document.getElementById('usernameBtn').addEventListener('click',lookupUsername);
+  document.getElementById('socialBtn').addEventListener('click',lookupSocial);
   document.getElementById('emailBtn').addEventListener('click',lookupEmail);
+  populatePhoneCountrySelect();
+  document.getElementById('phoneBtn').addEventListener('click',lookupPhone);
+  document.getElementById('pwnedPassBtn').addEventListener('click',checkPwnedPassword);
+  document.getElementById('pwnedPassToggle').addEventListener('click',function(){
+    const inp=document.getElementById('pwnedPassInput');
+    const isPwd=inp.type==='password';
+    inp.type=isPwd?'text':'password';
+    this.textContent=isPwd?'Hide':'Show';
+  });
+  document.getElementById('pwnedPassInput').addEventListener('keydown',function(e){if(e.key==='Enter')checkPwnedPassword();});
   document.getElementById('domainBtn').addEventListener('click',lookupDomain);
   document.getElementById('dnsBtn').addEventListener('click',lookupDNS);
   document.getElementById('securityBtn').addEventListener('click',lookupSecurity);
@@ -1174,7 +1373,7 @@ document.addEventListener('DOMContentLoaded', function(){
   document.getElementById('cveBtn').addEventListener('click',lookupCVE);
   document.getElementById('waybackBtn').addEventListener('click',lookupWayback);
   document.getElementById('portBtn').addEventListener('click',lookupPortCheck);
-  const enterMap={discordInput:lookupDiscord,githubInput:lookupGithub,ipInput:lookupIP,usernameInput:lookupUsername,emailInput:lookupEmail,domainInput:lookupDomain,dnsInput:lookupDNS,securityInput:lookupSecurity,npmInput:lookupNpm,cryptoInput:lookupCrypto,weatherInput:lookupWeather,cveInput:lookupCVE,waybackInput:lookupWayback,portInput:lookupPortCheck};
+  const enterMap={discordInput:lookupDiscord,githubInput:lookupGithub,ipInput:lookupIP,usernameInput:lookupUsername,socialInput:lookupSocial,emailInput:lookupEmail,phoneInput:lookupPhone,domainInput:lookupDomain,dnsInput:lookupDNS,securityInput:lookupSecurity,npmInput:lookupNpm,cryptoInput:lookupCrypto,weatherInput:lookupWeather,cveInput:lookupCVE,waybackInput:lookupWayback,portInput:lookupPortCheck};
   Object.keys(enterMap).forEach(function(id){const el=document.getElementById(id);if(el)el.addEventListener('keydown',function(e){if(e.key==='Enter')enterMap[id]();});});
   setInterval(()=>{liveCount+=BigInt(Math.floor(Math.random()*3));document.getElementById('liveCount').textContent=liveCount.toLocaleString();},1500);
 });
